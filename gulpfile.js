@@ -1,38 +1,42 @@
 const gulp = require('gulp');
 const sass = require('gulp-sass')(require('sass'));
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
+const obfuscate = require('gulp-obfuscate');
+const imagemin = require('gulp-imagemin');
 
-// Função para compilar o Sass
-function compilaSass() {
-    return gulp.src('./source/styles/main.scss')  // Caminho do arquivo Sass
-        .pipe(sass({                             // Compilação do Sass
-            outputStyle: 'compressed'            // Geração do CSS comprimido
+// Função para comprimir imagens
+function comprimeImagens(){
+    return gulp.src('./source/images/**/*.{jpg,png,gif,svg}')  // Incluindo diferentes tipos de imagem
+        .on('data', function(file) {
+            console.log('Imagem encontrada: ' + file.relative);  // Log da imagem sendo processada
+        })
+        .pipe(imagemin({verbose: true}))  // Ativando modo verbose para obter mais detalhes no log
+        .pipe(gulp.dest('./build/images'));
+}
+
+// Função para comprimir JavaScript
+function comprimeJavaScript(){
+    return gulp.src('./source/scripts/*.js')
+        .pipe(uglify())
+        .pipe(obfuscate())
+        .pipe(gulp.dest('./build/scripts'));
+}
+
+// Função para compilar Sass
+function compilaSass(){
+    return gulp.src('./source/styles/main.scss')
+        .pipe(sourcemaps.init())
+        .pipe(sass({
+            outputStyle: 'compressed'
         }))
-        .pipe(gulp.dest('./build/styles'));      // Destino do arquivo CSS compilado
+        .pipe(sourcemaps.write('./maps'))
+        .pipe(gulp.dest('./build/styles')); 
 }
 
-// Função de exemplo para simular uma tarefa com delay
-function funcaoPadrao(callback) {
-    setTimeout(function() {
-        console.log("Executando via funcaoPadrao");
-        callback();  // Chama o callback para sinalizar o fim da tarefa
-    }, 2000);
+// Tarefa padrão
+exports.default = function(){
+    gulp.watch('./source/styles/*.scss', { ignoreInitial: false}, gulp.series(compilaSass));
+    gulp.watch('./source/images/**/*.{jpg,png,gif,svg}', { ignoreInitial: false}, gulp.series(comprimeImagens));
+    gulp.watch('./source/scripts/*.js', { ignoreInitial: false}, gulp.series(comprimeJavaScript));
 }
-
-// Função que imprime "Oi" e chama outra função com atraso
-function dizOi(callback) {
-    setTimeout(function() {
-        console.log("Oi, estou dizendo oi!");
-        dizTchau(callback);  // Chama dizTchau e passa o callback
-    }, 1000);
-}
-
-// Função que imprime "Tchau"
-function dizTchau(callback) {
-    console.log("Tchau, estou indo!");
-    callback();  // Chama o callback para sinalizar o fim da tarefa
-}
-
-// Expondo as tarefas para o Gulp
-exports.default = gulp.parallel(funcaoPadrao, dizOi);  // Executa as duas funções em paralelo
-exports.dizOi = dizOi;  // Tarefa dizOi
-exports.sass = compilaSass;  // Tarefa Sass
