@@ -1,0 +1,23 @@
+{
+  "name": "estudos",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "less": "less-watch-compiler ./src/styles ./build/styles",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LeonardoPereira003/Estudos.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LeonardoPereira003/Estudos/issues"
+  },
+  "homepage": "https://github.com/LeonardoPereira003/Estudos#readme",
+  "description": "",
+  "devDependencies": {
+    "less": "^4.2.1"
+  }
+}
