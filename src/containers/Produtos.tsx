@@ -1,43 +1,36 @@
-import { Produto as ProdutoType } from '../App'
-import Produto from '../components/Produto'
+// src/containers/Produtos.tsx
+import React from 'react'
+import { useGetProductsQuery } from '../features/api/apiSlice'
+import { useDispatch } from 'react-redux'
+import { addItem } from '../features/cart/cartSlice'
+import Produto from '../components/Produto' // ajuste se o import for diferente
 
-import * as S from './styles'
+const Produtos: React.FC = () => {
+  const { data: products, isLoading, isError } = useGetProductsQuery()
+  const dispatch = useDispatch()
 
-type Props = {
-  produtos: ProdutoType[]
-  favoritos: ProdutoType[]
-  adicionarAoCarrinho: (produto: ProdutoType) => void
-  favoritar: (produto: ProdutoType) => void
-}
-
-const ProdutosComponent = ({
-  produtos,
-  favoritos,
-  adicionarAoCarrinho,
-  favoritar
-}: Props) => {
-  const produtoEstaNosFavoritos = (produto: ProdutoType) => {
-    const produtoId = produto.id
-    const IdsDosFavoritos = favoritos.map((f) => f.id)
-
-    return IdsDosFavoritos.includes(produtoId)
-  }
+  if (isLoading) return <p>Carregando...</p>
+  if (isError) return <p>Erro ao carregar produtos</p>
 
   return (
-    <>
-      <S.Produtos>
-        {produtos.map((produto) => (
-          <Produto
-            estaNosFavoritos={produtoEstaNosFavoritos(produto)}
-            key={produto.id}
-            produto={produto}
-            favoritar={favoritar}
-            aoComprar={adicionarAoCarrinho}
-          />
-        ))}
-      </S.Produtos>
-    </>
+    <div>
+      {products?.map((p: any) => (
+        <div key={p.id}>
+          {/* Ajuste a renderização para seu layout — aqui ex.: */}
+          <h3>{p.title || p.name}</h3>
+          <p>R$ {p.price}</p>
+          <button onClick={() => dispatch(addItem({
+            id: p.id,
+            title: p.title || p.name,
+            price: p.price,
+            image: p.image
+          }))}>
+            Adicionar ao carrinho
+          </button>
+        </div>
+      ))}
+    </div>
   )
 }
 
-export default ProdutosComponent
+export default Produtos
