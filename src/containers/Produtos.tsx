@@ -1,36 +1,36 @@
-// src/containers/Produtos.tsx
-import React from 'react'
-import { useGetProductsQuery } from '../features/api/apiSlice'
-import { useDispatch } from 'react-redux'
-import { addItem } from '../features/cart/cartSlice'
-import Produto from '../components/Produto' // ajuste se o import for diferente
+  import { useDispatch } from 'react-redux'
+  import { useGetProductsQuery } from '../features/cart/api/apiSlice'
+  import { addItem } from '../features/cart/cartSlice'
+  import Produto from '../components/Produto'
+  import { Produto as ProdutoType } from '../types'
 
-const Produtos: React.FC = () => {
-  const { data: products, isLoading, isError } = useGetProductsQuery()
-  const dispatch = useDispatch()
+  const Produtos: React.FC = () => {
+    const dispatch = useDispatch()
+    const { data: products, isLoading, isError } = useGetProductsQuery()
 
-  if (isLoading) return <p>Carregando...</p>
-  if (isError) return <p>Erro ao carregar produtos</p>
+    if (isLoading) return <p>Carregando...</p>
+    if (isError) return <p>Erro ao carregar produtos</p>
 
-  return (
-    <div>
-      {products?.map((p: any) => (
-        <div key={p.id}>
-          {/* Ajuste a renderização para seu layout — aqui ex.: */}
-          <h3>{p.title || p.name}</h3>
-          <p>R$ {p.price}</p>
-          <button onClick={() => dispatch(addItem({
-            id: p.id,
-            title: p.title || p.name,
-            price: p.price,
-            image: p.image
-          }))}>
-            Adicionar ao carrinho
-          </button>
-        </div>
-      ))}
-    </div>
-  )
-}
+    return (
+      <div>
+        {products?.map((p: ProdutoType) => (
+          <Produto
+            key={p.id}
+            produto={p}
+            onAddToCart={() =>
+              dispatch(
+                addItem({
+                  id: p.id,
+                  nome: p.nome,
+                  preco: p.preco,
+                  imagem: p.imagem
+                })
+              )
+            }
+          />
+        ))}
+      </div>
+    )
+  }
 
-export default Produtos
+  export default Produtos

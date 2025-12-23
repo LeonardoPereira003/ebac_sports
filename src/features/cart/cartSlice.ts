@@ -2,22 +2,18 @@
 
     interface CartItem {
     id: number
-    title: string
-    price: number
-    image?: string
+    nome: string
+    preco: number
+    imagem: string
     quantity: number
     }
 
     interface CartState {
     items: CartItem[]
-    totalQuantity: number
-    totalPrice: number
     }
 
     const initialState: CartState = {
-    items: [],
-    totalQuantity: 0,
-    totalPrice: 0
+    items: []
     }
 
     const cartSlice = createSlice({
@@ -25,32 +21,16 @@
     initialState,
     reducers: {
         addItem(state, action: PayloadAction<Omit<CartItem, 'quantity'>>) {
-        const product = action.payload
-        const existing = state.items.find(i => i.id === product.id)
-
-        if (existing) {
-            existing.quantity += 1
-        } else {
-            state.items.push({ ...product, quantity: 1 })
-        }
-
-        state.totalQuantity += 1
-        state.totalPrice += product.price
-        },
-
-        removeItem(state, action: PayloadAction<number>) {
-        const id = action.payload
-        const item = state.items.find(i => i.id === id)
+        const item = state.items.find(i => i.id === action.payload.id)
 
         if (item) {
-            state.totalQuantity -= item.quantity
-            state.totalPrice -= item.price * item.quantity
+            item.quantity += 1
+        } else {
+            state.items.push({ ...action.payload, quantity: 1 })
         }
-
-        state.items = state.items.filter(i => i.id !== id)
         }
     }
     })
 
-    export const { addItem, removeItem } = cartSlice.actions
+    export const { addItem } = cartSlice.actions
     export default cartSlice.reducer

@@ -1,43 +1,34 @@
-import { Produto as ProdutoType } from '../../App'
-import * as S from './styles'
+  import * as S from './styles'
+  import { Produto as ProdutoType } from '../../types'
 
-type Props = {
-  produto: ProdutoType
-  aoComprar: (produto: ProdutoType) => void
-  favoritar: (produto: ProdutoType) => void
-  estaNosFavoritos: boolean
-}
+  type Props = {
+    produto: ProdutoType
+    onAddToCart: () => void
+  }
 
-export const paraReal = (valor: number) =>
-  new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
-    valor
-  )
+  const Produto: React.FC<Props> = ({ produto, onAddToCart }) => {
+    return (
+      <S.Produto>
+        <S.Capa>
+          <img src={produto.imagem} alt={produto.nome} />
+        </S.Capa>
 
-const ProdutoComponent = ({
-  produto,
-  aoComprar,
-  favoritar,
-  estaNosFavoritos
-}: Props) => {
-  return (
-    <S.Produto>
-      <S.Capa>
-        <img src={produto.imagem} alt={produto.nome} />
-      </S.Capa>
-      <S.Titulo>{produto.nome}</S.Titulo>
-      <S.Prices>
-        <strong>{paraReal(produto.preco)}</strong>
-      </S.Prices>
-      <S.BtnComprar onClick={() => favoritar(produto)} type="button">
-        {estaNosFavoritos
-          ? '- Remover dos favoritos'
-          : '+ Adicionar aos favoritos'}
-      </S.BtnComprar>
-      <S.BtnComprar onClick={() => aoComprar(produto)} type="button">
-        Adicionar ao carrinho
-      </S.BtnComprar>
-    </S.Produto>
-  )
-}
+        <S.Titulo>{produto.nome}</S.Titulo>
 
-export default ProdutoComponent
+        <S.Prices>{paraReal(produto.preco)}</S.Prices>
+
+        <S.BtnComprar onClick={onAddToCart}>
+          Adicionar ao carrinho
+        </S.BtnComprar>
+      </S.Produto>
+    )
+  }
+
+  function paraReal(valor: number) {
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    })
+  }
+
+  export default Produto

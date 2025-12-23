@@ -1,33 +1,37 @@
-import * as S from './styles'
+  import * as S from './styles'
+  import cesta from '../../assets/cesta.png'
+  import { Produto } from '../../types'
 
-import { Produto } from '../../App'
+  type Props = {
+    itensNoCarrinho: Produto[]
+  }
 
-import cesta from '../../assets/cesta.png'
-import { paraReal } from '../Produto'
+  const Header: React.FC<Props> = ({ itensNoCarrinho }) => {
+    const valorTotal = itensNoCarrinho.reduce(
+      (acc, item) => acc + item.preco,
+      0
+    )
 
-type Props = {
-  itensNoCarrinho: Produto[]
-  favoritos: Produto[]
-}
+    return (
+      <S.Header>
+        <h1>EBAC Sports</h1>
 
-const Header = ({ itensNoCarrinho, favoritos }: Props) => {
-  const valorTotal = itensNoCarrinho.reduce((acc, item) => {
-    acc += item.preco
-    return acc
-  }, 0)
+        <div>
+          <img src={cesta} alt="Carrinho" />
+          <span>
+            {itensNoCarrinho.length} itens, valor total:{' '}
+            {paraReal(valorTotal)}
+          </span>
+        </div>
+      </S.Header>
+    )
+  }
 
-  return (
-    <S.Header>
-      <h1>EBAC Sports</h1>
-      <div>
-        <span>{favoritos.length} favoritos</span>
-        <img src={cesta} />
-        <span>
-          {itensNoCarrinho.length} itens, valor total: {paraReal(valorTotal)}
-        </span>
-      </div>
-    </S.Header>
-  )
-}
+  function paraReal(valor: number) {
+    return valor.toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    })
+  }
 
-export default Header
+  export default Header
