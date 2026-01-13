@@ -1,26 +1,34 @@
+import { useDispatch } from 'react-redux'
 import { Produto as ProdutoType } from '../App'
 import Produto from '../components/Produto'
+import { adicionar } from '../store/slices/carrinhoSlice'
 
 import * as S from './styles'
 
 type Props = {
   produtos: ProdutoType[]
   favoritos: ProdutoType[]
-  adicionarAoCarrinho: (produto: ProdutoType) => void
   favoritar: (produto: ProdutoType) => void
 }
 
 const ProdutosComponent = ({
   produtos,
   favoritos,
-  adicionarAoCarrinho,
   favoritar
 }: Props) => {
+  // Dispatch do Redux
+  const dispatch = useDispatch()
+
   const produtoEstaNosFavoritos = (produto: ProdutoType) => {
     const produtoId = produto.id
     const IdsDosFavoritos = favoritos.map((f) => f.id)
 
     return IdsDosFavoritos.includes(produtoId)
+  }
+
+  // ✅ AGORA USA REDUX DE VERDADE
+  const adicionarAoCarrinho = (produto: ProdutoType) => {
+    dispatch(adicionar(produto))
   }
 
   return (
